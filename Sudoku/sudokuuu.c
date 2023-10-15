@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include "dificuldade.h"
-// #include "Desenhos.h"
+#include "Desenhos.h"
 
 #define TAMTAB 9
 
@@ -89,14 +89,19 @@ int backSudoku(int sudoku[TAMTAB][TAMTAB])
 
 void imprimeTab(int tab[TAMTAB][TAMTAB])
 {
+
     for (int a = 0; a < TAMTAB; a++)
     {
         for (int b = 0; b < TAMTAB; b++)
         {
             if (b % 3 == 0)
+            {
                 printf("%3d  ", tab[a][b]);
+            }
             else
+            {
                 printf("%2d  ", tab[a][b]);
+            }
         }
         if (a % 3 == 2)
             printf("\n\n");
@@ -132,52 +137,69 @@ int brincaSu()
     return 1;
 };
 
-int main()
+int newGame(int tab[TAMTAB][TAMTAB], int tab2[TAMTAB][TAMTAB])
 {
 
-    int tab[TAMTAB][TAMTAB] =
-        {
-            {5, 3, 0, 0, 7, 0, 0, 0, 0},
-            {6, 0, 0, 1, 9, 5, 0, 0, 0},
-            {0, 9, 8, 0, 0, 0, 0, 6, 0},
-            {8, 0, 0, 0, 6, 0, 0, 0, 3},
-            {4, 0, 0, 8, 0, 3, 0, 0, 1},
-            {7, 0, 0, 0, 2, 0, 0, 0, 6},
-            {0, 6, 0, 0, 0, 0, 2, 8, 0},
-            {0, 0, 0, 4, 1, 9, 0, 0, 5},
-            {0, 0, 0, 0, 8, 0, 0, 7, 9},
-        };
-        
-    // system("mode con:cols=140 lines=40"); // Controlar tamanho do cmd
-    // brincaSu();
-
-    memset(tab, 0, sizeof(tab));
     srand((unsigned)time(NULL));
 
     int numero, posCol, posLin, verificado;
-
-    for (int a = 0; a < 20;)
+    int possivel = 1;
+    do
     {
-
-        numero = geraNumRandom();
-        posLin = geraNumRandom();
-        posCol = geraNumRandom();
-
-        verificado = insereSudoku(tab, posCol - 1, posLin - 1, numero);
-        if (verificado && numero > 0 && numero < 10 && tab[posLin][posCol] == 0)
+        for (int a = 0; a < TAMTAB; a++)
         {
-            a++;
-            tab[posLin - 1][posCol - 1] = numero;
+            for (int b = 0; b < TAMTAB; b++)
+            {
+                tab[a][b] = 0;
+            }
         }
-        else
+        for (int a = 0; a < 20;)
         {
 
-            printf("Nao foi possivel inserir esse numero");
-            Sleep(100);
+            numero = geraNumRandom();
+            posLin = geraNumRandom();
+            posCol = geraNumRandom();
+
+            verificado = insereSudoku(tab, posCol - 1, posLin - 1, numero);
+            if (verificado && numero > 0 && numero < 10 && tab[posLin][posCol] == 0)
+            {
+                a++;
+                tab[posLin - 1][posCol - 1] = numero;
+            }
+            else
+            {
+
+                printf("Nao foi possivel inserir esse numero");
+                Sleep(100);
+            }
+            system("cls");
+            desenhaSudoku(tab);
+            for (int a = 0; a < TAMTAB; a++)
+            {
+                for (int b = 0; b < TAMTAB; b++)
+                {
+                    tab2[a][b] = tab[a][b];
+                }
+            }
         }
-        system("cls");
-        imprimeTab(tab);
-    }
+        if (backSudoku(tab))
+        {
+            possivel = 0;
+        }
+    } while (possivel);
+    return 1;
+}
+
+int main()
+{
+
+    int tab[TAMTAB][TAMTAB];
+    int tabJogo[TAMTAB][TAMTAB];
+    memset(tab, 0, sizeof(tab));
+    memset(tabJogo, 0, sizeof(tabJogo));
+
+    system("mode con:cols=130 lines=35"); // Controlar tamanho do cmd
+                                          // brincaSu();
 
     // do
     // {
@@ -207,7 +229,38 @@ int main()
     //     system("cls");
     //     imprimeTab(tab);
     // } while (1);
-    backSudoku(tab);
-    imprimeTab(tab);
+
+    int verificador = 0;
+
+    switch (Menu_Desenho())
+    {
+    case 1:
+        desenha2Sudoku(tab, tabJogo);
+        break;
+    case 2:
+        break;
+    case 3:
+        do
+        {
+            if (newGame(tab, tabJogo))
+            {
+                verificador = 1;
+            }
+            else
+            {
+                memset(tab, 0, sizeof(tab));
+            }
+
+        } while (!verificador);
+
+        break;
+    default:
+        break;
+    }
+
+    desenha2Sudoku(tabJogo, tab);
+
+    // system("pause");
+    getch();
     return 0;
 }
