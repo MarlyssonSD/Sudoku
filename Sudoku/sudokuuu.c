@@ -1,6 +1,6 @@
 #include <stdio.h>
-#include "dificuldade.h"
 #include "Desenhos.h"
+// #include "dificuldade.h"
 
 #define TAMTAB 9
 

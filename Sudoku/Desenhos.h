@@ -16,6 +16,12 @@ int Escolhas();
 int Escolhido(int escolha);
 void desenhaSudoku(int tab[TAMTAB][TAMTAB]);
 void desenha2Sudoku(int tab[TAMTAB][TAMTAB], int tab2[TAMTAB][TAMTAB]);
+int geraNumRandom();
+
+int geraNumRandom()
+{
+    return rand() % 9 + 1;
+}
 
 void desenha2Sudoku(int tab[TAMTAB][TAMTAB], int tab2[TAMTAB][TAMTAB])
 {
