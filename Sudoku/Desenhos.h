@@ -16,11 +16,82 @@ int Escolhas();
 int Escolhido(int escolha);
 void desenhaSudoku(int tab[TAMTAB][TAMTAB]);
 void desenha2Sudoku(int tab[TAMTAB][TAMTAB], int tab2[TAMTAB][TAMTAB]);
-int geraNumRandom();
+void imprimeTab(int tab[TAMTAB][TAMTAB]);
+int confereSudoku(int tab[TAMTAB][TAMTAB]);
+void comoJogar();
 
-int geraNumRandom()
+void comoJogar()
 {
-    return rand() % 9 + 1;
+    clrscr();
+    moldura();
+    Nome_Do_Jogo();
+
+    int linha = 14, coluna = 25;
+    gotoxy(coluna + 20, linha);
+    printf("OBJETIVO: ENCHER A TABELA COM NUMEROS");
+    linha += 1;
+    coluna += 2;
+
+    gotoxy(58, ++linha);
+    printf("/\\REGRAS/\\");
+    gotoxy(coluna, ++linha);
+    printf("1. NAO PODE HAVER NUMEROS IGUAIS NA MESMA COLUNA ESCOLHIDA");
+    gotoxy(coluna, ++linha);
+    printf("2. NAO PODE HAVER NUMEROS IGUAIS NA MESMA LINHA ESCOLHIDA");
+    gotoxy(coluna, ++linha);
+    printf("3. NAO PODE HAVER NUMEROS IGUAIS NO MESMO QUADRADO 3x3 DELIMITADO POR ESPACO");
+
+    linha += 2;
+    gotoxy(54, linha);
+    printf("/\\FUNCIONALIDADES/\\");
+    gotoxy(coluna, ++linha);
+    printf("1. 'JOGAR' - JOGO COMUM PARA COMPLETAR A TABELA");
+    gotoxy(coluna, ++linha);
+    printf("2. 'GERADOR DE SUDOKU' - GERA UMA TABELA INCOMPLETA DE UM LADO E DO OUTRO");
+    gotoxy(coluna, ++linha);
+
+    printf("RESOLVIDA POR BACKTRACKING");
+
+    gotoxy(50, 30);
+    printf("|APERTE QUALQUER TECLA|");
+
+    getch();
+}
+
+int confereSudoku(int tab[TAMTAB][TAMTAB])
+{
+    for (int a = 0; a < TAMTAB; a++)
+    {
+        for (int b = 0; b < TAMTAB; b++)
+        {
+            if (tab[a][b] == 0)
+                return 1;
+        }
+    }
+    return 0;
+}
+
+void imprimeTab(int tab[TAMTAB][TAMTAB]) // imprime sudoku sem setar localização
+{
+
+    for (int a = 0; a < TAMTAB; a++)
+    {
+        for (int b = 0; b < TAMTAB; b++)
+        {
+            if (b % 3 == 0)
+            {
+                printf("%3d  ", tab[a][b]);
+            }
+            else
+            {
+                printf("%2d  ", tab[a][b]);
+            }
+        }
+        if (a % 3 == 2)
+            printf("\n\n");
+        else
+            printf("\n");
+    }
 }
 
 void desenha2Sudoku(int tab[TAMTAB][TAMTAB], int tab2[TAMTAB][TAMTAB])
@@ -56,7 +127,7 @@ void desenha2Sudoku(int tab[TAMTAB][TAMTAB], int tab2[TAMTAB][TAMTAB])
             inicio_y = inicio_y + 1;
         }
     }
-    //============
+
     inicio_x = 82; // Calcula a posição x
     inicio_y = 15; // Calcula a posição y
 
@@ -153,7 +224,8 @@ void moldura()
 
 void Cor_Moldura()
 {
-    textbackground(LIGHTBLUE);
+    textbackground(BLACK);
+    // textbackground(LIGHTBLUE);
     textcolor(RED);
     clrscr();
 
@@ -259,25 +331,28 @@ int Menu_Desenho()
 
 int Escolhido(int escolha)
 {
-    int x = 60, y = 30;
+    int x = 50, y = 30;
     if (escolha == 1)
     {
         gotoxy(x, y);
         printf("Voce escolheu: JOGAR!!!");
-
         Cor_Moldura();
+
+        Sleep(1000);
         return escolha;
     }
     else if (escolha == 2)
     {
         gotoxy(x, y);
         printf("Voce escolheu: COMO JOGAR!!!");
+        Sleep(1000);
         return escolha;
     }
     else if (escolha == 3)
     {
         gotoxy(x, y);
-        printf("Voce escolheu: OPCAO!!!");
+        printf("Voce escolheu: GERADOR DE SUDOKU!!!");
+        Sleep(1000);
         return escolha;
     }
     else if (escolha == 4)
@@ -295,7 +370,7 @@ int Escolhas()
     char letra;
 
     gotoxy(100, 2);
-    textcolor(BLACK);
+    textcolor(RED);
     printf("MOVA COM 'W' E 'S'");
     gotoxy(100, 3);
     printf("OU UTILIZE AS SETAS");

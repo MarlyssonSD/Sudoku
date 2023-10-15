@@ -1,51 +1,13 @@
 #include <stdio.h>
 #include "Desenhos.h"
-// #include "dificuldade.h"
+#include "Jogo.h"
 
 #define TAMTAB 9
 
-int checkLinCol(int TAB[TAMTAB][TAMTAB], int posCol, int posLin, int num);
-int check3x3(int TAB[TAMTAB][TAMTAB], int posCol, int posLin, int num);
-int insereSudoku(int TAB[TAMTAB][TAMTAB], int posCol, int posLin, int num);
 int backSudoku(int sudoku[TAMTAB][TAMTAB]);
-void imprimeTab(int tab[TAMTAB][TAMTAB]);
 int brincaSu();
-
-int checkLinCol(int TAB[TAMTAB][TAMTAB], int posCol, int posLin, int num)
-{
-    for (int i = 0; i < TAMTAB; i++)
-    {
-        if (TAB[posLin][i] == num || TAB[i][posCol] == num)
-            return 0;
-    }
-    return 1;
-}
-
-int check3x3(int TAB[TAMTAB][TAMTAB], int posCol, int posLin, int num)
-{
-    int linResult, colResult;
-    linResult = posLin - (posLin % 3);
-    colResult = posCol - (posCol % 3);
-    for (int a = 0; a < 3; a++)
-    {
-        for (int b = 0; b < 3; b++)
-        {
-            if (TAB[linResult + a][colResult + b] == num)
-                return 0;
-        }
-    }
-    return 1;
-}
-
-int insereSudoku(int TAB[TAMTAB][TAMTAB], int posCol, int posLin, int num)
-{
-    if (check3x3(TAB, posCol, posLin, num) && checkLinCol(TAB, posCol, posLin, num))
-    {
-        return 1;
-    }
-
-    return 0;
-}
+int jogar(int tab[TAMTAB][TAMTAB], int tab2[TAMTAB][TAMTAB]);
+int newGame(int tab[TAMTAB][TAMTAB], int tab2[TAMTAB][TAMTAB]);
 
 int backSudoku(int sudoku[TAMTAB][TAMTAB])
 {
@@ -87,29 +49,6 @@ int backSudoku(int sudoku[TAMTAB][TAMTAB])
     return 0;
 }
 
-void imprimeTab(int tab[TAMTAB][TAMTAB])
-{
-
-    for (int a = 0; a < TAMTAB; a++)
-    {
-        for (int b = 0; b < TAMTAB; b++)
-        {
-            if (b % 3 == 0)
-            {
-                printf("%3d  ", tab[a][b]);
-            }
-            else
-            {
-                printf("%2d  ", tab[a][b]);
-            }
-        }
-        if (a % 3 == 2)
-            printf("\n\n");
-        else
-            printf("\n");
-    }
-}
-
 int brincaSu()
 {
     int tab[TAMTAB][TAMTAB] =
@@ -128,7 +67,7 @@ int brincaSu()
     if (backSudoku(tab))
     {
         printf("Sudoku resolvido\n");
-        imprimeTab(tab);
+        desenhaSudoku(tab);
     }
     else
     {
@@ -136,6 +75,43 @@ int brincaSu()
     }
     return 1;
 };
+
+int jogar(int tab[TAMTAB][TAMTAB], int tab2[TAMTAB][TAMTAB])
+{
+    int numero, posCol, posLin;
+
+    newGame(tab, tab2);
+    do
+    {
+        desenhaSudoku(tab2);
+
+        gotoxy(30, 32);
+        printf("Numero: ");
+        scanf("%d", &numero);
+
+        gotoxy(60, 32);
+        printf("linha: ");
+        scanf("%d", &posLin);
+
+        gotoxy(90, 32);
+        printf("coluna: ");
+        scanf("%d", &posCol);
+
+        if (tab[posLin - 1][posCol - 1] == numero)
+        {
+            tab2[posLin - 1][posCol - 1] = numero;
+        }
+        else
+        {
+            gotoxy(50, 30);
+            printf("---NAO FOI POSSIVEL INSERIR O NUMERO---");
+            Sleep(400);
+        }
+
+        system("cls");
+
+    } while (numero != -1 && confereSudoku(tab2));
+}
 
 int newGame(int tab[TAMTAB][TAMTAB], int tab2[TAMTAB][TAMTAB])
 {
@@ -166,14 +142,7 @@ int newGame(int tab[TAMTAB][TAMTAB], int tab2[TAMTAB][TAMTAB])
                 a++;
                 tab[posLin - 1][posCol - 1] = numero;
             }
-            else
-            {
 
-                printf("Nao foi possivel inserir esse numero");
-                Sleep(100);
-            }
-            system("cls");
-            desenhaSudoku(tab);
             for (int a = 0; a < TAMTAB; a++)
             {
                 for (int b = 0; b < TAMTAB; b++)
@@ -199,68 +168,40 @@ int main()
     memset(tabJogo, 0, sizeof(tabJogo));
 
     system("mode con:cols=130 lines=35"); // Controlar tamanho do cmd
-                                          // brincaSu();
 
-    // do
-    // {
-    //     printf("Numero: ");
-    //     scanf("%d", &numero);
-    //     printf("linha: ");
-    //     scanf("%d", &posLin);
-    //     printf("coluna: ");
-    //     scanf("%d", &posCol);
-
-    //     // numero = geraNumRandom();
-    //     // posLin = geraNumRandom();
-    //     // posCol = geraNumRandom();
-
-    //     verificado = insereSudoku(tab, posCol - 1, posLin - 1, numero);
-    //     if (verificado && numero > 0 && numero < 10 && tab[posLin][posCol] == 0)
-    //     {
-    //         tab[posLin - 1][posCol - 1] = verificado;
-    //     }
-    //     else
-    //     {
-
-    //         printf("Nao foi possivel inserir esse numero");
-    //         Sleep(100);
-    //     }
-
-    //     system("cls");
-    //     imprimeTab(tab);
-    // } while (1);
-
-    int verificador = 0;
-
-    switch (Menu_Desenho())
+    int verificador = 0, menu = 0;
+    do
     {
-    case 1:
-        desenha2Sudoku(tab, tabJogo);
-        break;
-    case 2:
-        break;
-    case 3:
-        do
+        menu = Menu_Desenho();
+        switch (menu)
         {
-            if (newGame(tab, tabJogo))
+        case 1:
+            jogar(tab, tabJogo);
+            break;
+        case 2:
+            comoJogar();
+            break;
+        case 3:
+            do
             {
-                verificador = 1;
-            }
-            else
-            {
-                memset(tab, 0, sizeof(tab));
-            }
+                if (newGame(tab, tabJogo))
+                {
+                    verificador = 1;
+                }
+                else
+                {
+                    memset(tab, 0, sizeof(tab));
+                }
 
-        } while (!verificador);
+            } while (!verificador);
+            desenha2Sudoku(tabJogo,tab);
+            getch();
+            break;
+        default:
+            break;
+        }
+    } while (menu != 4);
 
-        break;
-    default:
-        break;
-    }
-
-    desenha2Sudoku(tabJogo, tab);
-
-    // system("pause");
     getch();
     return 0;
 }
